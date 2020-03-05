@@ -30,7 +30,7 @@ module.exports = function (context) {
 
     // replace dash (-) with underscore (_)
     packageName = packageName.replace(/-/g , "_");
-    
+
     console.info("Running android-install.Hook: " + context.hook + ", Package: " + packageName + ", Path: " + projectRoot + ".");
 
     if (!packageName) {
@@ -48,7 +48,7 @@ module.exports = function (context) {
 
  	if (!fs.existsSync(targetDir)) {
 		targetDir  = path.join(projectRoot, "platforms", "android", "app", "src", "main", "java", packageName.replace(/\./g, path.sep), "wxapi");
-	} 
+	}
 
     // var engines =  config.getEngines();
 
@@ -61,9 +61,9 @@ module.exports = function (context) {
     //             targetDir  = path.join(projectRoot, "platforms", "android", "app", "src", "main", "java", packageName.replace(/\./g, path.sep), "wxapi");
     //         }
     //     }
-    // }); 
+    // });
 
-    console.log(targetDir);
+    console.log("cordova-plugin-wechat", targetDir, "\n".repeat(5));
 
     var targetFiles = ["EntryActivity.java", "WXEntryActivity.java", "WXPayEntryActivity.java"];
 
@@ -76,7 +76,8 @@ module.exports = function (context) {
         });
     } else {
         // create directory
-        shell.mkdir('-p', targetDir);
+        // shell.mkdir('-p', targetDir);
+        fs.mkdirSync(targetDir);
 
         // sync the content
         targetFiles.forEach(function (f) {
