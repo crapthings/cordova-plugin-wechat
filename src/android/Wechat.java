@@ -457,20 +457,16 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_FILE:
                     WXFileObject fileObject = new WXFileObject();
-                    InputStream file = getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_FILE));
+                    File file = getFileInputStreamUrl(media.getString(KEY_ARG_MESSAGE_MEDIA_FILE));
                     if (file != null) {
-                        try {
-                            fileObject.fileData = Util.readBytes(file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        fileObject.filePath = file.getPath​();
                     }
                     mediaObject = fileObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_IMAGE:
                     Bitmap image = getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE, 0);
-                    // give some tips to user           
+                    // give some tips to user
                     if(image != null) {
                         mediaObject = new WXImageObject(image);
                         image.recycle();
@@ -676,6 +672,41 @@ public class Wechat extends CordovaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return inputStream;
+    }
+
+    protected File getFileInputStreamUrl(String url) {
+        File inputStream = null;
+
+
+            if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    if (!cordova.hasPermission(ANDROID_WRITE_EXTERNAL_STORAGE)) {
+                        cordova.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, ANDROID_WRITE_EXTERNAL_STORAGE);
+                    }
+                }
+
+                File file = Util.downloadAndCacheFile(webView.getContext(), url);
+
+                if (file == null) {
+                    Log.d(TAG, String.format("File could not be downloaded from %s.", url));
+                    return null;
+                }
+
+                // url = file.getAbsolutePath();
+                inputStream = file;
+
+                Log.d(TAG, String.format("File was downloaded and cached to %s.", file.getAbsolutePath()));
+
+            } else {
+
+                Log.d(TAG, String.format("File is located at %s.", url));
+
+            }
+
+
 
         return inputStream;
     }
