@@ -679,34 +679,23 @@ public class Wechat extends CordovaPlugin {
     protected File getFileInputStreamUrl(String url) {
         File inputStream = null;
 
-
-            if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
-
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                    if (!cordova.hasPermission(ANDROID_WRITE_EXTERNAL_STORAGE)) {
-                        cordova.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, ANDROID_WRITE_EXTERNAL_STORAGE);
-                    }
-                }
-
-                File file = Util.downloadAndCacheFile(webView.getContext(), url);
-
-                if (file == null) {
-                    Log.d(TAG, String.format("File could not be downloaded from %s.", url));
-                    return null;
-                }
-
-                // url = file.getAbsolutePath();
-                inputStream = file;
-
-                Log.d(TAG, String.format("File was downloaded and cached to %s.", file.getAbsolutePath()));
-
-            } else {
-
-                Log.d(TAG, String.format("File is located at %s.", url));
-
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (!cordova.hasPermission(ANDROID_WRITE_EXTERNAL_STORAGE)) {
+                cordova.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, ANDROID_WRITE_EXTERNAL_STORAGE);
             }
+        }
 
+        File file = Util.downloadAndCacheFile(webView.getContext(), url);
 
+        if (file == null) {
+            Log.d(TAG, String.format("File could not be downloaded from %s.", url));
+            return null;
+        }
+
+        // url = file.getAbsolutePath();
+        inputStream = file;
+
+        Log.d(TAG, String.format("File was downloaded and cached to %s.", file.getAbsolutePath()));
 
         return inputStream;
     }
