@@ -42,22 +42,6 @@ public class Util {
         return byteBuffer.toByteArray();
     }
 
-    public static File getCacheFolder(Context context) {
-        File cacheDir = null;
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            cacheDir = new File(Environment.getExternalStorageDirectory(), "cache");
-            if (!cacheDir.isDirectory()) {
-                cacheDir.mkdirs();
-            }
-        }
-
-        if(!cacheDir.isDirectory()) {
-            cacheDir = context.getCacheDir(); //get system cache folder
-        }
-
-        return cacheDir;
-    }
-
     public static File downloadAndCacheFile(Context context, String url) {
         URL fileURL = null;
         try {
@@ -75,7 +59,7 @@ public class Util {
 
             InputStream inputStream = connection.getInputStream();
 
-            File cacheDir = getCacheFolder(context);
+            File cacheDir = context.getExternalFilesDir(null);
             File cacheFile = new File(cacheDir, url.substring(url.lastIndexOf("/") + 1));
             FileOutputStream outputStream = new FileOutputStream(cacheFile);
 
